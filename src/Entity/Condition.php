@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\jsonapi\Query;
+namespace Drupal\entityconditions\Entity;
 
-class EntityCondition {
+class Condition {
 
   /**
    * The allowed condition operators.
