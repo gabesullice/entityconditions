@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\jsonapi\Query;
+namespace Drupal\entityconditions\Entity;
 
-class EntityConditionGroup {
+class ConditionGroup {
 
   /**
    * The AND conjunction value.
@@ -33,7 +33,7 @@ class EntityConditionGroup {
    */
   public function __construct($conjunction, $members = []) {
     if (!in_array($conjunction, self::$allowedConjunctions)) {
-      throw new \InvalidArgumentException('Allowed conjunctions: AND, OR.');
+      throw new \InvalidArgumentException("'{$conjunction}' is not a valid conjunction. Allowed conjunctions are: 'AND', 'OR'");
     }
     $this->conjunction = $conjunction;
     $this->members = $members;
