@@ -1,0 +1,6 @@
+name: Entity Conditions
+description: Generic entity condition and condition group value objects
+package: Internal APIs
+
+type: module
+core: 8.x
