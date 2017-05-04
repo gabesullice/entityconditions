@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\Tests\entityconditions\Kernel\Plugin\DataType;
+namespace Drupal\Tests\typed_data_conditions\Kernel\Plugin\DataType;
 
 /**
- * @coversDefaultClass \Drupal\entityconditions\Plugin\DataType\Condition
- * @group entityconditions
+ * @coversDefaultClass \Drupal\typed_data_conditions\Plugin\DataType\Condition
+ * @group typed_data_conditions
  */
 class ConditionTest extends ConditionKernelTestBase {
 

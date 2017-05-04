@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\entityconditions\Plugin\DataType;
+namespace Drupal\typed_data_conditions\Plugin\DataType;
 
 use Drupal\Core\TypedData\Plugin\DataType\Map;
 
@@ -8,7 +8,7 @@ use Drupal\Core\TypedData\Plugin\DataType\Map;
  * @DataType(
  *   id = "condition_group",
  *   label = @Translation("Condition Group"),
- *   definition_class = "\Drupal\entityconditions\TypedData\ConditionGroupDefinition"
+ *   definition_class = "\Drupal\typed_data_conditions\TypedData\ConditionGroupDefinition"
  * )
  */
 class ConditionGroup extends Map {
@@ -30,7 +30,7 @@ class ConditionGroup extends Map {
   /**
    * The members which belong to the the condition group.
    *
-   * @return \Drupal\entityconditions\Plugin\DataType\Condition[]|\Drupal\entityconditions\Plugin\DataType\ConditionGroup[]
+   * @return \Drupal\typed_data_conditions\Plugin\DataType\Condition[]|\Drupal\typed_data_conditions\Plugin\DataType\ConditionGroup[]
    */
   public function getMembers() {
     return $this->get('members')->getValue();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\entityconditions\Kernel\Plugin\DataType;
+namespace Drupal\Tests\typed_data_conditions\Kernel\Plugin\DataType;
 
 use Drupal\KernelTests\KernelTestBase;
 
@@ -14,7 +14,7 @@ class ConditionKernelTestBase extends KernelTestBase {
    */
   public static $modules = [
     //'system',
-    'entityconditions',
+    'typed_data_conditions',
   ];
 
   /**

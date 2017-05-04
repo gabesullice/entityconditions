@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\Tests\entityconditions\Kernel\Plugin\DataType;
+namespace Drupal\Tests\typed_data_conditions\Kernel\Plugin\DataType;
 
-use Drupal\entityconditions\Plugin\DataType\Condition;
-use Drupal\entityconditions\Plugin\DataType\ConditionGroup;
+use Drupal\typed_data_conditions\Plugin\DataType\Condition;
+use Drupal\typed_data_conditions\Plugin\DataType\ConditionGroup;
 
 /**
- * @coversDefaultClass \Drupal\entityconditions\Plugin\DataType\ConditionGroup
- * @group entityconditions
+ * @coversDefaultClass \Drupal\typed_data_conditions\Plugin\DataType\ConditionGroup
+ * @group typed_data_conditions
  */
 class ConditionGroupTest extends ConditionKernelTestBase {
 

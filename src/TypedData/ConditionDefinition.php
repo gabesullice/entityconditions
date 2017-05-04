@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\entityconditions\TypedData;
+namespace Drupal\typed_data_conditions\TypedData;
 
 use \Drupal\Core\TypedData\DataDefinition;
 use \Drupal\Core\TypedData\MapDataDefinition;
-use \Drupal\entityconditions\Plugin\DataType\Condition;
+use \Drupal\typed_data_conditions\Plugin\DataType\Condition;
 
 class ConditionDefinition extends MapDataDefinition {
 

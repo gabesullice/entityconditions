@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\entityconditions\Plugin\DataType;
+namespace Drupal\typed_data_conditions\Plugin\DataType;
 
 use Drupal\Core\TypedData\Plugin\DataType\Map;
 
@@ -8,7 +8,7 @@ use Drupal\Core\TypedData\Plugin\DataType\Map;
  * @DataType(
  *   id = "condition",
  *   label = @Translation("Condition"),
- *   definition_class = "\Drupal\entityconditions\TypedData\ConditionDefinition"
+ *   definition_class = "\Drupal\typed_data_conditions\TypedData\ConditionDefinition"
  * )
  */
 class Condition extends Map {
