@@ -5,6 +5,7 @@ namespace Drupal\typed_data_conditions;
 use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\typed_data_conditions\ConditionInterface;
+
 /**
  * Evaluates data conditions against data.
  */
@@ -20,40 +21,14 @@ class Evaluator {
   public function evaluate(TypedDataInterface $data, $condition) {
     assert($condition instanceof ConditionInterface);
 
-    if ($data instanceof ComplexDataInterface) {
-      $value = $data->get($condition->getProperty())->getValue();
+    $comparison = $condition->getComparison();
+    $operator = $condition->getOperator();
+
+    if ($data instanceof ComparableDataInterface) {
+      return $data->compare($comparison, $operator);
     }
     else {
-      $value = $data->getValue();
-    }
-
-    $comparison = $condition->getComparison();
-
-    switch ($condition->getOperator()) {
-      case '=':
-        return $value == $comparison;
-      case '<>':
-        return $value != $comparison;
-      case '<':
-        return $value < $comparison;
-      case '>':
-        return $value > $comparison;
-      case '>=':
-        return $value >= $comparison;
-      case '<=':
-        return $value <= $comparison;
-      case 'BETWEEN':
-        return $comparison[0] < $value && $value < $comparison[1];
-      case 'NOT BETWEEN':
-        return !($comparison[0] < $value && $value < $comparison[1]);
-      case 'IN':
-        return in_array($value, $comparison);
-      case 'NOT IN':
-        return !in_array($value, $comparison);
-      case 'IS NULL':
-        return is_null($value);
-      case 'IS NOT NULL':
-        return !is_null($value);
+      return ComparableDataValue::create($data)->compare($comparison, $operator);
     }
   }
 

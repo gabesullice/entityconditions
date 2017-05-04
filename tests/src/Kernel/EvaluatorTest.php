@@ -31,7 +31,9 @@ class EvaluatorTest extends KernelTestBase {
    * @dataProvider evaluateProvider
    */
   public function testEvaluate_condition($data, $condition, $expect) {
-    $condition = $this->createData('condition', $condition);
+    $condition = $this->createData('condition', [
+      'comparison' => $this->createData($data['datatype'], $condition['comparison']),
+    ] + $condition);
     $data = $this->createData($data['datatype'], $data['value']);
     $this->assertEqual($expect, $this->evaluator->evaluate($data, $condition));
   }
