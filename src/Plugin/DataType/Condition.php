@@ -3,6 +3,7 @@
 namespace Drupal\typed_data_conditions\Plugin\DataType;
 
 use Drupal\Core\TypedData\Plugin\DataType\Map;
+use Drupal\typed_data_conditions\ConditionInterface;
 
 /**
  * @DataType(
@@ -11,7 +12,7 @@ use Drupal\Core\TypedData\Plugin\DataType\Map;
  *   definition_class = "\Drupal\typed_data_conditions\TypedData\ConditionDefinition"
  * )
  */
-class Condition extends Map {
+class Condition extends Map implements ConditionInterface {
 
   /*
    * The allowed condition operators.
@@ -34,7 +35,7 @@ class Condition extends Map {
   }
 
   /**
-   * The field to be evaluated.
+   * The property to be evaluated.
    *
    * @return string
    */
@@ -60,7 +61,8 @@ class Condition extends Map {
    * @return string
    */
   public function getOperator() {
-    return $this->get('operator')->getCastedValue();
+    $operator = $this->get('operator')->getCastedValue();
+    return empty($operator) ? '=' : $operator;
   }
 
 }
