@@ -1,5 +1,5 @@
-name: Entity Conditions
-description: Generic entity condition and condition group value objects
+name: Typed Data Conditions
+description: Generic data types and evaluation of typed data conditions
 package: Internal APIs
 
 type: module
