@@ -31,4 +31,14 @@ class KernelTestBase extends CoreKernelTestBase {
     $this->typedDataManager = $this->container->get('typed_data_manager');
   }
 
+  public function createData($type, $value) {
+    $definition = $this->typedDataManager->createDataDefinition($type);
+    return $this->typedDataManager->create($definition, $value);
+  }
+
+  public function createListData($type, $value) {
+    $definition = $this->typedDataManager->createListDataDefinition($type);
+    return $this->typedDataManager->create($definition, $value);
+  }
+
 }

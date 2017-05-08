@@ -3,11 +3,16 @@
 namespace Drupal\typed_data_conditions;
 
 use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\Core\TypedData\TraversableTypedDataInterface;
 
-class ComparableDataValue implements ComparableDataInterface {
+/**
+ * Shim class for TypedData that have not implemented ComparableDataInterface.
+ */
+class ComparableDataValue implements ComparableDataInterface, TypedDataInterface {
 
   use ComparableDataTrait {
     compare as protected traitCompare;
+    checkComparable as protected traitCheckComparable;
   }
 
   /**
@@ -17,6 +22,9 @@ class ComparableDataValue implements ComparableDataInterface {
    */
   protected $wrapped;
 
+  /**
+   * Creates a new ComparableDataValue from an instance of TypedData.
+   */
   public function __construct(TypedDataInterface $data) {
     $this->wrapped = $data;
   }
@@ -41,13 +49,11 @@ class ComparableDataValue implements ComparableDataInterface {
     return $this->traitCompare($data, $operator);
   }
 
-  protected function checkComparable(TypedDataInterface $data) {
-    if (get_class($this->wrapped) !== get_class($data)) {
-      $message = "Cannot compare data of type '%s' with data of type '%s'";
-      throw new IncomparableDataType(
-        sprintf($message, get_class($this), get_class($data))
-      );
-    }
+  /**
+   * {@inheritdoc}
+   */
+  protected function checkComparable(TypedDataInterface $value, TypedDataInterface $data, $operator) {
+    $this->traitCheckComparable($this->wrapped, $data, $operator);
   }
 
   /**
@@ -55,6 +61,97 @@ class ComparableDataValue implements ComparableDataInterface {
    */
   public function __call($method, $arguments) {
     return call_user_func_array([$this->wrapped, $method], $arguments);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance($definition, $name = NULL, TraversableTypedDataInterface $parent = NULL) {
+    return $this->__call(__FUNCTION__, func_get_args());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDataDefinition() {
+    return $this->__call(__FUNCTION__, []);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getValue() {
+    return $this->__call(__FUNCTION__, []);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setValue($value, $notify = TRUE) {
+    return $this->__call(__FUNCTION__, func_get_args());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getString() {
+    return $this->__call(__FUNCTION__, []);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getConstraints() {
+    return $this->__call(__FUNCTION__, []);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validate() {
+    return $this->__call(__FUNCTION__, []);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function applyDefaultValue($notify = TRUE){
+    return $this->__call(__FUNCTION__, func_get_args());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getName() {
+    return $this->__call(__FUNCTION__, []);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getParent() {
+    return $this->__call(__FUNCTION__, []);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRoot() {
+    return $this->__call(__FUNCTION__, []);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPropertyPath() {
+    return $this->__call(__FUNCTION__, []);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setContext($name = NULL, TraversableTypedDataInterface $parent = NULL) {
+    return $this->__call(__FUNCTION__, func_get_args());
   }
 
 }

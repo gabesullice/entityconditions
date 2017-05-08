@@ -79,4 +79,124 @@ class ConditionTest extends ConditionKernelTestBase {
     ];
   }
 
+  /**
+   * @covers ::evaluate
+   * @dataProvider evaluateProvider
+   */
+  public function testEvaluate($data, $condition, $expect) {
+    if (!isset($condition['comparison'])) {
+      $comparison = NULL;
+    }
+    elseif ($data['datatype'] == 'condition') {
+      $comparison = $this->createData($data['datatype'], $condition['comparison']);
+    }
+    elseif (is_array($condition['comparison'])) {
+      $comparison = $this->createListData($data['datatype'], $condition['comparison']);
+    }
+    else {
+      $comparison = $this->createData($data['datatype'], $condition['comparison']);
+    }
+
+    $condition = $this->createData('condition', [
+      'comparison' => $comparison,
+    ] + $condition);
+
+    $data = $this->createData($data['datatype'], $data['value']);
+
+    $this->assertEqual($expect, $condition->evaluate($data, $condition));
+  }
+
+  public function evaluateProvider() {
+    return [
+      [['datatype' => 'string', 'value' => 'barzap'], ['property' => 'value', 'comparison' => 'foo', 'operator' => 'CONTAINS'], FALSE],
+      [['datatype' => 'string', 'value' => 'zapfoobar'], ['property' => 'value', 'comparison' => 'foo', 'operator' => 'CONTAINS'], TRUE],
+
+      [['datatype' => 'string', 'value' => 'foobar'], ['property' => 'value', 'comparison' => 'foo', 'operator' => 'STARTS_WITH'], TRUE],
+      [['datatype' => 'string', 'value' => 'barzap'], ['property' => 'value', 'comparison' => 'foo', 'operator' => 'STARTS_WITH'], FALSE],
+      [['datatype' => 'string', 'value' => 'barfoo'], ['property' => 'value', 'comparison' => 'foo', 'operator' => 'STARTS_WITH'], FALSE],
+
+      [['datatype' => 'string', 'value' => 'foobar'], ['property' => 'value', 'comparison' => 'foo', 'operator' => 'ENDS_WITH'], FALSE],
+      [['datatype' => 'string', 'value' => 'barzap'], ['property' => 'value', 'comparison' => 'foo', 'operator' => 'ENDS_WITH'], FALSE],
+      [['datatype' => 'string', 'value' => 'barfoo'], ['property' => 'value', 'comparison' => 'foo', 'operator' => 'ENDS_WITH'], TRUE],
+
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 5, 'operator' => '='], TRUE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 6, 'operator' => '='], FALSE],
+
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'foo', 'operator' => '='], TRUE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'bar', 'operator' => '='], FALSE],
+
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 5, 'operator' => '<>'], FALSE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 6, 'operator' => '<>'], TRUE],
+
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'foo', 'operator' => '<>'], FALSE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'bar', 'operator' => '<>'], TRUE],
+
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 4, 'operator' => '<'], FALSE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 5, 'operator' => '<'], FALSE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 6, 'operator' => '<'], TRUE],
+
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'bar', 'operator' => '<'], FALSE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'foo', 'operator' => '<'], FALSE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'zap', 'operator' => '<'], TRUE],
+
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 4, 'operator' => '>'], TRUE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 5, 'operator' => '>'], FALSE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 6, 'operator' => '>'], FALSE],
+
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'bar', 'operator' => '>'], TRUE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'foo', 'operator' => '>'], FALSE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'zap', 'operator' => '>'], FALSE],
+
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 4, 'operator' => '<='], FALSE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 5, 'operator' => '<='], TRUE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 6, 'operator' => '<='], TRUE],
+
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'bar', 'operator' => '<='], FALSE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'foo', 'operator' => '<='], TRUE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'zap', 'operator' => '<='], TRUE],
+
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 4, 'operator' => '>='], TRUE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 5, 'operator' => '>='], TRUE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => 6, 'operator' => '>='], FALSE],
+
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'bar', 'operator' => '>='], TRUE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'foo', 'operator' => '>='], TRUE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => 'zap', 'operator' => '>='], FALSE],
+
+      [['datatype' => 'integer', 'value' => 4], ['property' => 'value', 'comparison' => [4, 6], 'operator' => 'BETWEEN'], FALSE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => [4, 6], 'operator' => 'BETWEEN'], TRUE],
+      [['datatype' => 'integer', 'value' => 6], ['property' => 'value', 'comparison' => [4, 6], 'operator' => 'BETWEEN'], FALSE],
+
+      [['datatype' => 'string', 'value' => 'bar'], ['property' => 'value', 'comparison' => ['bar', 'zap'], 'operator' => 'BETWEEN'], FALSE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => ['bar', 'zap'], 'operator' => 'BETWEEN'], TRUE],
+      [['datatype' => 'string', 'value' => 'zap'], ['property' => 'value', 'comparison' => ['bar', 'zap'], 'operator' => 'BETWEEN'], FALSE],
+
+      [['datatype' => 'integer', 'value' => 4], ['property' => 'value', 'comparison' => [4, 6], 'operator' => 'NOT BETWEEN'], TRUE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => [4, 6], 'operator' => 'NOT BETWEEN'], FALSE],
+      [['datatype' => 'integer', 'value' => 6], ['property' => 'value', 'comparison' => [4, 6], 'operator' => 'NOT BETWEEN'], TRUE],
+
+      [['datatype' => 'string', 'value' => 'bar'], ['property' => 'value', 'comparison' => ['bar', 'zap'], 'operator' => 'NOT BETWEEN'], TRUE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => ['bar', 'zap'], 'operator' => 'NOT BETWEEN'], FALSE],
+      [['datatype' => 'string', 'value' => 'zap'], ['property' => 'value', 'comparison' => ['bar', 'zap'], 'operator' => 'NOT BETWEEN'], TRUE],
+
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => [4, 5, 6], 'operator' => 'IN'], TRUE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => [4, 6], 'operator' => 'IN'], FALSE],
+
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => ['bar', 'foo', 'zap'], 'operator' => 'IN'], TRUE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => ['bar', 'zap'], 'operator' => 'IN'], FALSE],
+
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => [4, 5, 6], 'operator' => 'NOT IN'], FALSE],
+      [['datatype' => 'integer', 'value' => 5], ['property' => 'value', 'comparison' => [4, 6], 'operator' => 'NOT IN'], TRUE],
+
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => ['bar', 'foo', 'zap'], 'operator' => 'NOT IN'], FALSE],
+      [['datatype' => 'string', 'value' => 'foo'], ['property' => 'value', 'comparison' => ['bar', 'zap'], 'operator' => 'NOT IN'], TRUE],
+
+      [
+        ['datatype' => 'condition', 'value' => ['property' => 'foo', 'comparison' => 'bar', 'operator' => '=']],
+        ['property' => 'property', 'comparison' => ['property' => 'foo', 'comparison' => 'bar', 'operator' => '='], 'operator' => '='],
+        TRUE
+      ],
+    ];
+  }
+
 }
