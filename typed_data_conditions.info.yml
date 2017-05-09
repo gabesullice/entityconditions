@@ -4,3 +4,6 @@ package: Internal APIs
 
 type: module
 core: 8.x
+
+dependencies:
+  data_resolver:data_resolver

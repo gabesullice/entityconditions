@@ -4,6 +4,7 @@ namespace Drupal\typed_data_conditions\Plugin\DataType;
 
 use Drupal\Core\TypedData\Plugin\DataType\Map;
 use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\data_resolver\DataResolver;
 use Drupal\typed_data_conditions\ConditionInterface;
 use Drupal\typed_data_conditions\EvaluatorInterface;
 use Drupal\typed_data_conditions\ComparableDataValue;
@@ -83,12 +84,14 @@ class Condition extends Map implements ConditionInterface, EvaluatorInterface {
    *   The data against which the condition should be evaluated.
    */
   public function evaluate(TypedDataInterface $data) {
+    $value = DataResolver::create($data)->get($this->getProperty())->resolve();
+
     // Shim incomparable data types.
-    if (!($data instanceof ComparableDataInterface)) {
-      $data = ComparableDataValue::create($data);
+    if (!($value instanceof ComparableDataInterface)) {
+      $value = ComparableDataValue::create($value);
     }
 
-    return $data->compare($this->getComparison(), $this->getOperator());
+    return $value->compare($this->getComparison(), $this->getOperator());
   }
 
 }
