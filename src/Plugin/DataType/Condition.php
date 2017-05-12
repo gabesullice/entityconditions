@@ -7,9 +7,10 @@ use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\data_resolver\DataResolver;
 use Drupal\typed_data_conditions\ConditionInterface;
 use Drupal\typed_data_conditions\EvaluatorInterface;
-use Drupal\typed_data_conditions\ComparableDataValue;
 use Drupal\typed_data_conditions\ComparableDataInterface;
+use Drupal\typed_data_conditions\ComparableDataValue;
 use Drupal\typed_data_conditions\ComparableListDataInterface;
+use Drupal\typed_data_conditions\ComparableListDataValue;
 use Drupal\typed_data_conditions\ComparableStringDataInterface;
 
 /**
@@ -85,13 +86,26 @@ class Condition extends Map implements ConditionInterface, EvaluatorInterface {
    */
   public function evaluate(TypedDataInterface $data) {
     $value = DataResolver::create($data)->get($this->getProperty())->resolve();
+    $comparable = $this->upcast($value);
+    return $comparable->compare($this->getComparison(), $this->getOperator());
+  }
 
-    // Shim incomparable data types.
+  /**
+   * Helper function to upcast a resolved data value to something comparable.
+   *
+   * This is a hopefully a temporary shim until various TypedData more broadly
+   * implement ComparableDataInterface.
+   */
+  protected function upcast($value) {
     if (!($value instanceof ComparableDataInterface)) {
-      $value = ComparableDataValue::create($value);
+      if (count($value) === 1) {
+        $value = ComparableDataValue::create($value->first()->getValue());
+      }
+      else {
+        $value = ComparableListDataValue::create($value);
+      }
     }
-
-    return $value->compare($this->getComparison(), $this->getOperator());
+    return $value;
   }
 
 }

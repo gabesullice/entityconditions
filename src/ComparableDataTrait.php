@@ -60,7 +60,7 @@ trait ComparableDataTrait {
     if (in_array($operator, array_keys($list_comparisons))) {
       // If the data does not implement ListInterface, then we can't compare it.
       if (!($data instanceof ListInterface)) {
-        $message = "Cannot compare data of type '%s' with data of type '%s'";
+        $message = "Cannot compare data of type '%s' with data of type '%s'.";
         throw new IncomparableDataType(
           sprintf($message, get_class($value), get_class($data))
         );
@@ -72,10 +72,16 @@ trait ComparableDataTrait {
         $this->checkComparable($value, $data->first(), $list_comparisons[$operator]);
       }
     }
+    elseif ($operator == ComparableListDataInterface::CONTAINS) {
+      if (!($this instanceof ListInterface)) {
+        $message = "The '%s' operator cannot be used with non-list data. Have: '%s'";
+        throw new InvalidComparisonOperator(sprintf($message, $operator, get_class($this)));
+      }
+    }
     else {
       // Check that the data is of the same type.
       if (get_class($value) !== get_class($data)) {
-        $message = "Cannot compare data of type '%s' with data of type '%s'";
+        $message = "Cannot compare data of type '%s' with data of type '%s'.";
         throw new IncomparableDataType(
           sprintf($message, get_class($value), get_class($data))
         );
@@ -144,9 +150,13 @@ trait ComparableDataTrait {
   }
 
   public function contains($data) {
-    if ($data instanceof StringData) {
+    if ($data instanceof StringData && $this instanceof ListInterface) {
+      return $this->upcast($data)->compare($this, ComparableDataInterface::IN);
+    }
+    elseif ($data instanceof StringData) {
       return strpos($this->getValue(), $data->getValue()) !== FALSE;
-    } else {
+    }
+    else {
       return $this->upcast($data)->compare($this, ComparableDataInterface::IN);
     }
   }

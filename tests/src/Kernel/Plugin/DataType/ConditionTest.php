@@ -267,6 +267,34 @@ class ConditionTest extends ConditionKernelTestBase {
     ]);
 
     $this->assertEqual(FALSE, $condition2->evaluate($node_data));
+
+    $condition3 = $this->createCondition([
+      'property' => 'uid.entity.name.value',
+      'comparison' => $this->createData('string', 'user0'),
+    ]);
+
+    $this->assertEqual(TRUE, $condition3->evaluate($node_data));
+
+    $condition4 = $this->createCondition([
+      'property' => 'uid.entity.name.value',
+      'comparison' => $this->createData('string', 'should_be_false'),
+    ]);
+
+    $this->assertEqual(FALSE, $condition4->evaluate($node_data));
+
+    $condition5 = $this->createCondition([
+      'property' => 'uid.entity.name.value',
+      'comparison' => $this->createData('string', 'should_be_false'),
+    ]);
+
+    $this->assertEqual(FALSE, $condition5->evaluate($node_data));
+
+    $condition6 = $this->createCondition([
+      'property' => 'uid.entity.name.value',
+      'comparison' => $this->createData('string', 'user0'),
+    ]);
+
+    $this->assertEqual(TRUE, $condition6->evaluate($node_data));
   }
 
 }
