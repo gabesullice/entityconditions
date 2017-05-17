@@ -1,0 +1,33 @@
+typed_data_conditions.condition:
+  type: mapping
+  label: 'Condition'
+  mapping:
+    type:
+      type: string
+      label: 'Type'
+    property:
+      type: string
+      label: 'Property'
+    comparison:
+      type: string
+      label: 'Value'
+    operator:
+      type: string
+      label: 'Operator'
+
+typed_data_conditions.condition_group:
+  type: mapping
+  label: 'Condition Group'
+  mapping:
+    type:
+      type: string
+      label: 'Type'
+    conjunction:
+      type: string
+      label: 'Conjunction'
+    members:
+      type: sequence
+      label: 'Members'
+      sequence:
+        type: typed_data_conditions.[type]
+        label: 'Member'
