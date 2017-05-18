@@ -3,6 +3,8 @@
 namespace Drupal\typed_data_conditions\Plugin\DataType;
 
 use Drupal\Core\TypedData\Plugin\DataType\Map;
+use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\typed_data_conditions\EvaluatorInterface;
 
 /**
  * @DataType(
@@ -34,6 +36,29 @@ class ConditionGroup extends Map {
    */
   public function getMembers() {
     return $this->get('members')->getValue();
+  }
+
+  /**
+   * Evaluates the condition group.
+   *
+   * @return boolean
+   */
+  public function evaluate(TypedDataInterface $data) {
+    $conjunction = $this->getConjunction();
+    $members = $this->getMembers();
+
+    if ($conjunction == 'OR') {
+      return array_reduce($members, function ($result, $member) use ($data) {
+        if ($result) return TRUE;
+        return $member->evaluate($data);
+      }, FALSE);
+    }
+    elseif ($conjunction == 'AND') {
+      return array_reduce($members, function ($result, $member) use ($data) {
+        if ($result === FALSE) return FALSE;
+        return $member->evaluate($data);
+      }, NULL);
+    }
   }
 
 }

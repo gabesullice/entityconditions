@@ -2,8 +2,11 @@
 
 namespace Drupal\Tests\typed_data_conditions\Kernel\Plugin\DataType;
 
+use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\typed_data_conditions\EvaluatorInterface;
 use Drupal\typed_data_conditions\Plugin\DataType\Condition;
 use Drupal\typed_data_conditions\Plugin\DataType\ConditionGroup;
+use \Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\typed_data_conditions\Plugin\DataType\ConditionGroup
@@ -56,12 +59,49 @@ class ConditionGroupTest extends ConditionKernelTestBase {
   }
 
   /**
+   * @covers ::evaluate
+   * @dataProvider evaluateProvider
+   */
+  public function testEvaluate($conjunction, $results, $expect) {
+    $conditions = array_map(function ($result) {
+      $condition = $this->prophesize(EvaluatorInterface::class);
+      $condition->evaluate(Argument::type(TypedDataInterface::class))->willReturn($result);
+      return $condition->reveal();
+    }, $results);
+
+    $group = $this->createConditionGroup([
+      'conjunction' => $conjunction,
+      'members' => $conditions,
+    ]);
+
+    $data = $this->prophesize(TypedDataInterface::class);
+
+    $this->assertEquals($expect, $group->evaluate($data->reveal()));
+  }
+
+  /**
    * Provides data for the getMembers test.
    */
   public function getMembersProvider() {
     return [
       [[]],
       [[['property' => 'p', 'comparison' => 'c', 'operator' => '=']]],
+    ];
+  }
+
+  /**
+   * Provides data for the getMembers test.
+   */
+  public function evaluateProvider() {
+    return [
+      ['OR',  [], FALSE],
+      ['AND', [], FALSE],
+      ['AND', [TRUE, TRUE], TRUE],
+      ['AND', [TRUE, FALSE], FALSE],
+      ['AND', [FALSE, FALSE], FALSE],
+      ['OR',  [TRUE, TRUE], TRUE],
+      ['OR',  [TRUE, FALSE], TRUE],
+      ['OR',  [FALSE, FALSE], FALSE],
     ];
   }
 
